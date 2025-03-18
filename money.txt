@@ -1,0 +1,77 @@
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/7yhx/kwargs_Ui_Library/main/source.lua"))()
+
+
+local UI = Lib:Create{
+    Theme = "Dark", -- or any other theme
+    Size = UDim2.new(0, 555, 0, 400) -- default
+ }
+ 
+ local Main = UI:Tab{
+    Name = "Main"
+ }
+ 
+ local Divider = Main:Divider{
+    Name = "Main shit"
+ }
+ 
+ local QuitDivider = Main:Divider{
+    Name = "Quit"
+ }
+-- Função para alterar o dinheiro do jogador
+local function alterarDinheiro(jogador, valor)
+    if jogador:FindFirstChild("leaderstats") and jogador.leaderstats:FindFirstChild("Dinheiro") then
+        jogador.leaderstats.Dinheiro.Value = jogador.leaderstats.Dinheiro.Value + valor
+        print("Dinheiro atualizado para " .. jogador.leaderstats.Dinheiro.Value)
+    else
+        warn("Não foi possível encontrar leaderstats ou dinheiro.")
+    end
+end
+
+-- Criar um GUI para entrada de valor
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local ConfirmButton = Instance.new("TextButton")
+
+-- Configurar o GUI
+ScreenGui.Name = "DinheiroGui"
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 300, 0, 200)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+TextBox.Parent = Frame
+TextBox.Size = UDim2.new(0, 200, 0, 50)
+TextBox.Position = UDim2.new(0.5, -100, 0.2, 0)
+TextBox.PlaceholderText = "Digite o valor de dinheiro"
+TextBox.Text = ""
+
+ConfirmButton.Parent = Frame
+ConfirmButton.Size = UDim2.new(0, 100, 0, 50)
+ConfirmButton.Position = UDim2.new(0.5, -50, 0.6, 0)
+ConfirmButton.Text = "Confirmar"
+
+-- Tornar o GUI invisível inicialmente
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Enabled = false
+
+-- Abrir GUI ao pressionar "P"
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.P then
+        ScreenGui.Enabled = not ScreenGui.Enabled
+    end
+end)
+
+-- Manipular clique no botão de confirmação
+ConfirmButton.MouseButton1Click:Connect(function()
+    local valor = tonumber(TextBox.Text)
+    if valor then
+        local jogador = game.Players.LocalPlayer -- Jogador atual
+        alterarDinheiro(jogador, valor)
+        ScreenGui.Enabled = false -- Fechar o GUI
+    else
+        warn("Por favor, insira um número válido.")
+    end
+end)
